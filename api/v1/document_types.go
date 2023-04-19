@@ -32,7 +32,6 @@ type DocumentSpec struct {
 	// Foo is an example field of Document. Edit document_types.go to remove/update
 	Name  string `json:"name,omitempty"`
 	Image string `json:"image,omitempty"`
-	Route string `json:"route,omitempty"`
 }
 
 // DocumentStatus defines the observed state of Document

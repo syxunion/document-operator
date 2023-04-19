@@ -283,7 +283,6 @@ func createService(ctx context.Context, document *uccpsv1.Document, r *DocumentR
 		},
 	}
 	// 这一步非常关键！
-	// 建立关联后，删除elasticweb资源时就会将service也删除掉
 	if err := controllerutil.SetControllerReference(document, svc, r.Scheme); err != nil {
 		return err
 	}
@@ -315,34 +314,30 @@ func createRoute(ctx context.Context, document *uccpsv1.Document, r *DocumentRec
 	var weight int32
 
 	weight = 100
-	svc := &routev1.Route{
+	svrc := &routev1.Route{
+		TypeMeta: matev1.TypeMeta{
+			Kind: "Route",
+		},
 		ObjectMeta: matev1.ObjectMeta{
-			Namespace: document.Namespace,
+			GenerateName: "docs-route",
+			Namespace:    document.Namespace,
 		},
 		Spec: routev1.RouteSpec{
-			Port: &routev1.RoutePort{
-				TargetPort: intstr.IntOrString{StrVal: "8080"},
-			},
-			//TLS: &routev1.TLSConfig{
-			//Termination:                   "edge",
-			//InsecureEdgeTerminationPolicy: "Redirect",
-			//},
-			WildcardPolicy: routev1.WildcardPolicyNone,
-
 			To: routev1.RouteTargetReference{
 				Kind:   "Service",
-				Name:   "http-document",
+				Name:   "document-sample",
 				Weight: &weight,
 			},
+			WildcardPolicy: routev1.WildcardPolicyNone,
 		},
 	}
 	// 建立关联后，删除资源时就会将路由也删除掉
-	if err := controllerutil.SetControllerReference(document, svc, r.Scheme); err != nil {
+	if err := controllerutil.SetControllerReference(document, svrc, r.Scheme); err != nil {
 		return err
 	}
 
 	// 创建路由
-	if err := r.Create(ctx, svc); err != nil {
+	if err := r.Create(ctx, svrc); err != nil {
 		return err
 	}
 	return nil
