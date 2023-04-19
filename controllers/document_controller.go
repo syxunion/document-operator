@@ -319,8 +319,8 @@ func createRoute(ctx context.Context, document *uccpsv1.Document, r *DocumentRec
 			Kind: "Route",
 		},
 		ObjectMeta: matev1.ObjectMeta{
-			GenerateName: "docs-route",
-			Namespace:    document.Namespace,
+			Name:      "document-sample",
+			Namespace: document.Namespace,
 		},
 		Spec: routev1.RouteSpec{
 			To: routev1.RouteTargetReference{
