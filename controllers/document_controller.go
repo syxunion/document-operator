@@ -48,7 +48,8 @@ type DocumentReconciler struct {
 //+kubebuilder:rbac:groups=uccps.uccps.document.domain,resources=documents/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;update;patch;watch;list;delete;create
 //+kubebuilder:rbac:groups=core,resources=services,verbs=get;update;patch;watch;list;delete;create
-//+kubebuilder:rbac:groups=route,resources=routes,verbs=get;update;patch;watch;list;delete;create
+//+kubebuilder:rbac:groups=route.openshift.io,resources=routes,verbs=get;update;patch;watch;list;delete;create
+//+kubebuilder:rbac:groups=route.openshift.io,resources=routes/custom-host,verbs=get;update;patch;watch;list;delete;create
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -222,7 +223,7 @@ func updateDocumentDeployment(ctx context.Context, document *uccpsv1.Document, r
 							Ports: []corev1.ContainerPort{
 								{ContainerPort: 8080, Name: "http-document"},
 							},
-							Image:           "harbor.chinauos.com/syx-test/doc-test:1.3",
+							Image:           "harbor.chinauos.com/syx-test/doc-test:1.4",
 							ImagePullPolicy: "Always",
 							Resources: corev1.ResourceRequirements{
 								Requests: corev1.ResourceList{
@@ -323,6 +324,7 @@ func createRoute(ctx context.Context, document *uccpsv1.Document, r *DocumentRec
 			Namespace: document.Namespace,
 		},
 		Spec: routev1.RouteSpec{
+			Host: "uccps-document-app.com",
 			To: routev1.RouteTargetReference{
 				Kind:   "Service",
 				Name:   "document-sample",

@@ -40,8 +40,6 @@ spec:
                 description: Foo is an example field of Document. Edit document_types.go
                   to remove/update
                 type: string
-              route:
-                type: string
             type: object
           status:
             description: DocumentStatus defines the observed state of Document
